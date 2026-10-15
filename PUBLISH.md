@@ -2,8 +2,13 @@
 
 仓库：`IcinessLove/dsh-learning-mode` ｜ 版本 `0.1.0` ｜ tag `v0.1.0`
 
-**本地已就绪**：`git init` + 提交 `export:dsh-learning-mode@0.1.0`（分支 `main`）+ 远程 `origin` 指向
-`https://github.com/IcinessLove/dsh-learning-mode.git`。只差推送与 Release。
+**状态：已发布** ✓
+
+- 仓库：https://github.com/IcinessLove/dsh-learning-mode （PUBLIC / 话题 `dsh-pack` / 未归档）
+- Release：https://github.com/IcinessLove/dsh-learning-mode/releases/tag/v0.1.0 （正式发布，2 个资产）
+- 校验：根 `manifest.json` 的 `name`/`version` 与仓库名、tag 一致；远端 `.dspack` 下载后 sha256 与侧车一致（`76a47b38…6084`）；侧车为 64 位小写 hex
+
+以下步骤保留作**重新发布 / 升版本**时的参考。
 
 ## 0. 装并登录 GitHub CLI（一次性）
 
@@ -51,7 +56,16 @@ gh release view v0.1.0 --json tagName,isDraft,isPrerelease,assets `
 
 ## 4. 另一台设备怎么装
 
-**方式一（市场）**：目标设备装了 `@dsh-packforge/dsh-pack-plugin` → 其市场页搜 `dsh-learning-mode` → 安装（等采集器扫一轮，通常数十分钟到数小时）。
+**方式一（市场）**：目标设备装了 `@dsh-packforge/dsh-pack-plugin` → 其市场页搜 `dsh-learning-mode` → 安装。
+
+收录是**异步**的（采集器按周期扫描）。查收录状态（注意市场仓库在 `DSH-PackForge` 组织下，不是 `dsh-pack-market/dsh-pack-market`）：
+
+```powershell
+curl.exe -s https://raw.githubusercontent.com/DSH-PackForge/dsh-pack-market/main/index/index.json
+# 或在浏览器打开上面的 URL，搜 "dsh-learning-mode"
+```
+
+期望出现条目，且 `downloadUrl` / `sha256` / `size` 三指针齐全。
 
 **方式二（直接）**：目标设备执行
 
