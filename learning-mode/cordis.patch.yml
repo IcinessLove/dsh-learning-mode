@@ -1,0 +1,3 @@
+- insert:
+    - id: learning-mode
+      name: '@local/learning-mode'

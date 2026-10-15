@@ -1,0 +1,40 @@
+{
+  "name": "@local/learning-mode",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "学习模式：把 DSH 变成可中断、可回溯的结构化学习界面。",
+  "icon": "./icon.svg",
+  "meta": {
+    "title": "学习模式",
+    "description": "侧边栏学习界面：步骤化推导、连续预览、断点提问与回溯导航。"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "icon.svg",
+    "locale/*.json"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-session",
+        "@deepseek-ai/dsh-api-workspace-files"
+      ]
+    }
+  }
+}
