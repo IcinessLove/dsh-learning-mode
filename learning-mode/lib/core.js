@@ -491,6 +491,34 @@ export async function stepsWithoutAnchors(cwd, topic, steps) {
 }
 
 /**
+ * Every topic whose step files own an anchor (`<a id="X">`).
+ * Anchors are unique per step, so this disambiguates callers that omit `topic`:
+ * trusting the freshest state file can otherwise open the context package of a
+ * different subject (the reported "asked in topic A, package came from topic B").
+ */
+export async function topicsOwningAnchor(cwd, anchorId) {
+  if (typeof anchorId !== 'string' || anchorId.length === 0) return [];
+  const needle = `id="${anchorId}"`;
+  const owners = [];
+  for (const topic of await listTopics(cwd)) {
+    const steps = await listSteps(cwd, topic);
+    for (const step of steps) {
+      let text = '';
+      try {
+        text = await readFile(join(cwd, KB_DIR, topic, STEPS_DIR, step.file), 'utf8');
+      } catch (error) {
+        continue;
+      }
+      if (text.includes(needle)) {
+        owners.push(topic);
+        break;
+      }
+    }
+  }
+  return owners;
+}
+
+/**
  * Steps whose formulas are plain text / Unicode notation rather than LaTeX.
  * The panel renders those best-effort (KaTeX whenever it happens to parse them),
  * but correct sub/superscripts and the math font are only guaranteed for real

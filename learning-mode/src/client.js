@@ -526,6 +526,17 @@ window.__ModuleLoader__.load({
       return options;
     }
 
+    /**
+     * Pin the topic on every panel-driven action. The Host falls back to the
+     * freshest state file when `topic` is absent, so asking in one subject could
+     * open the context package of whichever subject was written most recently.
+     */
+    function withTopic(payload, topic) {
+      const base = payload !== null && typeof payload === 'object' ? payload : {};
+      if (typeof topic !== 'string' || topic.length === 0) return base;
+      return { ...base, topic };
+    }
+
     function createFace(remote, sessionId, getCommands) {
       const call = async (method, path, extra, signal) => {
         try {
@@ -1339,7 +1350,7 @@ window.__ModuleLoader__.load({
        */
       const runHost = useCallback(async (action, payload = {}) => {
         if (face === undefined || face === null) return false;
-        const result = await face.send(action, payload);
+        const result = await face.send(action, withTopic(payload, topic));
         if (result.ok) {
           setHostNotice(result.value);
           setError(null);
@@ -1356,7 +1367,7 @@ window.__ModuleLoader__.load({
           ? t('hostOffline')
           : (raw.includes('未知 action') ? `${raw} ｜ ${t('hostStale')}` : result.error));
         return false;
-      }, [face, t]);
+      }, [face, t, topic]);
 
       /* Panel → Host for the unified import entry. Declared after `runHost`: a
        * dependency array is evaluated during render, so referencing it earlier

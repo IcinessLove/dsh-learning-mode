@@ -1,12 +1,15 @@
-# 发布清单（dsh-learning-mode v0.1.0）
+# 发布清单（dsh-learning-mode）
 
-仓库：`IcinessLove/dsh-learning-mode` ｜ 版本 `0.1.0` ｜ tag `v0.1.0`
+仓库：`IcinessLove/dsh-learning-mode` ｜ 当前版本 `0.1.1` ｜ tag `v0.1.1`
 
-**状态：已发布** ✓
+**状态：v0.1.0 与 v0.1.1 均已发布** ✓
 
-- 仓库：https://github.com/IcinessLove/dsh-learning-mode （PUBLIC / 话题 `dsh-pack` / 未归档）
-- Release：https://github.com/IcinessLove/dsh-learning-mode/releases/tag/v0.1.0 （正式发布，2 个资产）
-- 校验：根 `manifest.json` 的 `name`/`version` 与仓库名、tag 一致；远端 `.dspack` 下载后 sha256 与侧车一致（`76a47b38…6084`）；侧车为 64 位小写 hex
+| tag | Release | 资产（.dspack sha256） |
+|---|---|---|
+| `v0.1.1` | https://github.com/IcinessLove/dsh-learning-mode/releases/tag/v0.1.1 | `55d51c85…1178` |
+| `v0.1.0` | https://github.com/IcinessLove/dsh-learning-mode/releases/tag/v0.1.0 | `76a47b38…6084` |
+
+仓库：PUBLIC / 话题 `dsh-pack` / 未归档。升版本见 [CHANGELOG.md](CHANGELOG.md)。
 
 以下步骤保留作**重新发布 / 升版本**时的参考。
 
@@ -32,12 +35,14 @@ gh repo edit IcinessLove/dsh-learning-mode --add-topic dsh-pack
 
 ## 2. 发正式 Release（两个资产，缺一不可）
 
+以 v0.1.1 为例（升版本时把三处版本号一起改）：
+
 ```powershell
-gh release create v0.1.0 `
-  release/dsh-learning-mode-0.1.0.dspack `
-  release/dsh-learning-mode-0.1.0.dspack.sha256 `
-  --title "dsh-learning-mode v0.1.0" `
-  --notes "DSH 侧边栏「学习模式」插件：结构化步骤连续预览、断点提问（简短/详细）、回溯导航、阅读标记（空格回位）、文献导入（可选模型）。"
+gh release create v0.1.1 `
+  release/dsh-learning-mode-0.1.1.dspack `
+  release/dsh-learning-mode-0.1.1.dspack.sha256 `
+  --title "dsh-learning-mode v0.1.1" `
+  --notes "修复：面板动作未携带主题导致上下文包错位（改用锚点归属解析 + 面板钉住当前主题）；标注 callout 去重按完整 header。"
 ```
 
 > 不要加 `--draft` / `--prerelease`，否则 `releases/latest` 取不到，市场扫不到。
@@ -49,9 +54,9 @@ gh repo view IcinessLove/dsh-learning-mode --json visibility,repositoryTopics `
   --jq '{visibility, topics: [.repositoryTopics[].name]}'
 # 期望：PUBLIC + 含 dsh-pack
 
-gh release view v0.1.0 --json tagName,isDraft,isPrerelease,assets `
+gh release view v0.1.1 --json tagName,isDraft,isPrerelease,assets `
   --jq '{tag: .tagName, draft: .isDraft, prerelease: .isPrerelease, assets: [.assets[].name]}'
-# 期望：tag=v0.1.0、draft=false、prerelease=false、assets 恰好两个
+# 期望：tag=v0.1.1、draft=false、prerelease=false、assets 恰好两个
 ```
 
 ## 4. 另一台设备怎么装
@@ -70,13 +75,13 @@ curl.exe -s https://raw.githubusercontent.com/DSH-PackForge/dsh-pack-market/main
 **方式二（直接）**：目标设备执行
 
 ```powershell
-gh release download v0.1.0 --repo IcinessLove/dsh-learning-mode --pattern "*.dspack*" -D .
+gh release download v0.1.1 --repo IcinessLove/dsh-learning-mode --pattern "*.dspack*" -D .
 # 用 PackForge 设置面板「安装 .dspack」选择下载到的文件
 
 # 或者完全不用 PackForge，直接拿便携包（在仓库里，不在 Release 资产中）：
-gh api repos/IcinessLove/dsh-learning-mode/contents/portable/learning-mode-0.1.0.zip --jq .content | ... 
-# 更简单：浏览器打开仓库 → portable/learning-mode-0.1.0.zip → Download
-Expand-Archive .\learning-mode-0.1.0.zip -DestinationPath .\lm
+gh api repos/IcinessLove/dsh-learning-mode/contents/portable/learning-mode-0.1.1.zip --jq .content | ... 
+# 更简单：浏览器打开仓库 → portable/learning-mode-0.1.1.zip → Download
+Expand-Archive .\learning-mode-0.1.1.zip -DestinationPath .\lm
 # 然后按 INSTALL.md：图形界面「添加插件 → 本地绝对路径」，或跑 install.ps1
 ```
 
@@ -94,8 +99,9 @@ pwsh -File .\install.ps1
 
 | 产物 | 大小 | sha256 |
 |---|---|---|
-| `release/dsh-learning-mode-0.1.0.dspack` | 235,149 B | `76a47b385cdaadbb4ba7cf9bc3e18a3c4f97e76f5c4892903d0893df28806084` |
-| `portable/learning-mode-0.1.0.zip` | 241,388 B | — |
+| `release/dsh-learning-mode-0.1.1.dspack` | 242,688 B | `55d51c85b9e5380108807b02cbe235b76ac55953596c6de1556af431b77d1178` |
+| `portable/learning-mode-0.1.1.zip` | — | — |
+| `release/dsh-learning-mode-0.1.0.dspack`（历史） | 235,149 B | `76a47b385cdaadbb4ba7cf9bc3e18a3c4f97e76f5c4892903d0893df28806084` |
 
 已做的校验：
 

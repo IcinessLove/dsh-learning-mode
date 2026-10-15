@@ -189,7 +189,14 @@ function rejectedResult(state, steps, topic, action, message, extra = {}) {
 export async function runLearningAction(args, cwd) {
   const resolved = await core.resolveTopic(cwd, args.topic);
   if (resolved.topic === null) throw new Error(resolved.reason);
-  const topic = resolved.topic;
+  let topic = resolved.topic;
+  /* A caller that omits `topic` (a chat-driven ask, an older panel) still names the
+   * subject through the anchor. Prefer the topic that actually owns it over the
+   * freshest state file, which may belong to another subject entirely. */
+  if (typeof args.topic !== 'string' || args.topic.length === 0) {
+    const owners = await core.topicsOwningAnchor(cwd, args.anchor_id);
+    if (owners.length > 0 && !owners.includes(topic)) topic = owners[0];
+  }
 
   let steps = await core.listSteps(cwd, topic);
   if (steps.length === 0) {
