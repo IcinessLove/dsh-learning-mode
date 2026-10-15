@@ -4,14 +4,17 @@
 
 **状态：v0.1.0 与 v0.1.1 均已发布** ✓
 
+**本仓库不参与 dspack 市场收录** ✓ —— 已撤出 `dsh-pack` 话题。采集器按 `search/repositories?q=topic:dsh-pack` 扫描，撤话题即退出（采集器源码注释：「目录只在撤出 topic 时清理」）。仓库保持 public、Release 正常，只是不再出现在市场列表里。
+
+> 想被收录时：`gh repo edit IcinessLove/dsh-learning-mode --add-topic dsh-pack`，等采集器下一轮（≤6 小时）。
+> 查收录状态：打开 `https://raw.githubusercontent.com/DSH-PackForge/dsh-pack-market/main/index/index.json` 搜 `dsh-learning-mode`——撤话题后应在下一轮消失。
+
 | tag | Release | 资产（.dspack sha256） |
 |---|---|---|
 | `v0.1.1` | https://github.com/IcinessLove/dsh-learning-mode/releases/tag/v0.1.1 | `55d51c85…1178` |
 | `v0.1.0` | https://github.com/IcinessLove/dsh-learning-mode/releases/tag/v0.1.0 | `76a47b38…6084` |
 
-仓库：PUBLIC / 话题 `dsh-pack` / 未归档。升版本见 [CHANGELOG.md](CHANGELOG.md)。
-
-以下步骤保留作**重新发布 / 升版本**时的参考。
+升版本见 [CHANGELOG.md](CHANGELOG.md)。以下步骤保留作**重新发布 / 升版本**时的参考。
 
 ## 0. 装并登录 GitHub CLI（一次性）
 
@@ -22,16 +25,16 @@ gh auth login
 gh auth status
 ```
 
-## 1. 建仓库 + 推送 + 打话题
+## 1. 建仓库 + 推送（**不打话题**）
 
 ```powershell
 cd <本目录>
 gh repo create IcinessLove/dsh-learning-mode --public --source . --push
-gh repo edit IcinessLove/dsh-learning-mode --add-topic dsh-pack
+# 不要执行 gh repo edit ... --add-topic dsh-pack —— 那会把本包送进 dspack 市场
 ```
 
 > 不用 `gh` 也可以：浏览器新建 **public** 空仓库 `dsh-learning-mode`（不要勾 README），然后
-> `git push -u origin main`（会弹凭据），再在仓库 About ⚙ 里加 `dsh-pack` 话题。
+> `git push -u origin main`（会弹凭据）。仓库 About 里**不要**加 `dsh-pack` 话题。
 
 ## 2. 发正式 Release（两个资产，缺一不可）
 
@@ -52,7 +55,7 @@ gh release create v0.1.1 `
 ```powershell
 gh repo view IcinessLove/dsh-learning-mode --json visibility,repositoryTopics `
   --jq '{visibility, topics: [.repositoryTopics[].name]}'
-# 期望：PUBLIC + 含 dsh-pack
+# 期望：PUBLIC + topics 为空（不含 dsh-pack）
 
 gh release view v0.1.1 --json tagName,isDraft,isPrerelease,assets `
   --jq '{tag: .tagName, draft: .isDraft, prerelease: .isPrerelease, assets: [.assets[].name]}'
@@ -61,24 +64,18 @@ gh release view v0.1.1 --json tagName,isDraft,isPrerelease,assets `
 
 ## 4. 另一台设备怎么装
 
-**方式一（市场）**：目标设备装了 `@dsh-packforge/dsh-pack-plugin` → 其市场页搜 `dsh-learning-mode` → 安装。
+**本包不进市场**，从 GitHub 直接装（三选一）：
 
-收录是**异步**的（采集器按周期扫描）。查收录状态（注意市场仓库在 `DSH-PackForge` 组织下，不是 `dsh-pack-market/dsh-pack-market`）：
-
-```powershell
-curl.exe -s https://raw.githubusercontent.com/DSH-PackForge/dsh-pack-market/main/index/index.json
-# 或在浏览器打开上面的 URL，搜 "dsh-learning-mode"
-```
-
-期望出现条目，且 `downloadUrl` / `sha256` / `size` 三指针齐全。
-
-**方式二（直接）**：目标设备执行
+**方式一（.dspack，推荐给装了 PackForge 的设备）**：
 
 ```powershell
 gh release download v0.1.1 --repo IcinessLove/dsh-learning-mode --pattern "*.dspack*" -D .
-# 用 PackForge 设置面板「安装 .dspack」选择下载到的文件
+# 用 PackForge 设置面板「安装 .dspack」选择下载到的文件（本地文件安装，不经过市场）
+```
 
-# 或者完全不用 PackForge，直接拿便携包（在仓库里，不在 Release 资产中）：
+**方式二（便携包，不依赖 PackForge）**：
+
+```powershell
 gh api repos/IcinessLove/dsh-learning-mode/contents/portable/learning-mode-0.1.1.zip --jq .content | ... 
 # 更简单：浏览器打开仓库 → portable/learning-mode-0.1.1.zip → Download
 Expand-Archive .\learning-mode-0.1.1.zip -DestinationPath .\lm
